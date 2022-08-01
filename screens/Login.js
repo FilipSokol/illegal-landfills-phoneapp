@@ -18,7 +18,15 @@ import {
   RightIcon,
   StyledInputLabel,
   StyledTextInput,
+  StyledButton,
+  ButtonText,
   Colors,
+  MsgBox,
+  Line,
+  ExtraView,
+  ExtraText,
+  TextLink,
+  TextLinkContent,
 } from '../components/styles';
 
 // colors
@@ -44,7 +52,7 @@ const Login = () => {
           {({ handleChange, handleBlur, handleSubmit, values }) => (
             <StyledFormArea>
               <MyTextInput
-                label="Email"
+                label="E-mail"
                 icon="mail"
                 onChangeText={handleChange('email')}
                 onBlur={handleBlur('email')}
@@ -62,6 +70,17 @@ const Login = () => {
                 hidePassword={hidePassword}
                 setHidePassword={setHidePassword}
               />
+              <MsgBox>Nieprawidłowy adres e‑mail lub hasło</MsgBox>
+              <StyledButton onPress={handleSubmit}>
+                <ButtonText>Zaloguj</ButtonText>
+              </StyledButton>
+              <Line />
+              <ExtraView>
+                <ExtraText>Nie posiadasz konta? </ExtraText>
+                <TextLink>
+                  <TextLinkContent>Zarejestruj</TextLinkContent>
+                </TextLink>
+              </ExtraView>
             </StyledFormArea>
           )}
         </Formik>
