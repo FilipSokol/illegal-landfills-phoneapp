@@ -28,64 +28,71 @@ import {
   TextLink,
   TextLinkContent,
 } from '../components/styles';
+import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 
 // colors
 const { brand, darkLight } = Colors;
 
-const Login = () => {
+const Login = ({ navigation }) => {
   const [hidePassword, setHidePassword] = useState(true);
 
-  return (
-    <StyledContainer>
-      <StatusBar style="dark" />
-      <InnerContainer>
-        <PageLogo resizeMode="cover" source={require('../assets/logo.jpg')} />
-        <PageTitle>Praca Inżynierska</PageTitle>
-        <SubTitle>Logowanie</SubTitle>
+  const pushHandler = () => {
+    navigation.push('Signup');
+  };
 
-        <Formik
-          initialValues={{ email: '', password: '' }}
-          onSubmit={(values) => {
-            console.log(values);
-          }}
-        >
-          {({ handleChange, handleBlur, handleSubmit, values }) => (
-            <StyledFormArea>
-              <MyTextInput
-                label="E-mail"
-                icon="mail"
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                value={values.email}
-                keyboardType="email-address"
-              />
-              <MyTextInput
-                label="Hasło"
-                icon="lock"
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                value={values.password}
-                secureTextEntry={hidePassword}
-                isPassword={true}
-                hidePassword={hidePassword}
-                setHidePassword={setHidePassword}
-              />
-              <MsgBox>Nieprawidłowy adres e‑mail lub hasło</MsgBox>
-              <StyledButton onPress={handleSubmit}>
-                <ButtonText>Zaloguj</ButtonText>
-              </StyledButton>
-              <Line />
-              <ExtraView>
-                <ExtraText>Nie posiadasz konta? </ExtraText>
-                <TextLink>
-                  <TextLinkContent>Zarejestruj</TextLinkContent>
-                </TextLink>
-              </ExtraView>
-            </StyledFormArea>
-          )}
-        </Formik>
-      </InnerContainer>
-    </StyledContainer>
+  return (
+    <KeyboardAvoidingWrapper>
+      <StyledContainer>
+        <StatusBar style="dark" />
+        <InnerContainer>
+          <PageLogo resizeMode="cover" source={require('../assets/logo.png')} />
+          <PageTitle>Praca Inżynierska</PageTitle>
+          <SubTitle>Logowanie</SubTitle>
+
+          <Formik
+            initialValues={{ email: '', password: '' }}
+            onSubmit={(values) => {
+              console.log(values);
+            }}
+          >
+            {({ handleChange, handleBlur, handleSubmit, values }) => (
+              <StyledFormArea>
+                <MyTextInput
+                  label="E-mail"
+                  icon="mail"
+                  onChangeText={handleChange('email')}
+                  onBlur={handleBlur('email')}
+                  value={values.email}
+                  keyboardType="email-address"
+                />
+                <MyTextInput
+                  label="Hasło"
+                  icon="lock"
+                  onChangeText={handleChange('password')}
+                  onBlur={handleBlur('password')}
+                  value={values.password}
+                  secureTextEntry={hidePassword}
+                  isPassword={true}
+                  hidePassword={hidePassword}
+                  setHidePassword={setHidePassword}
+                />
+                <MsgBox>Nieprawidłowy adres e‑mail lub hasło</MsgBox>
+                <StyledButton onPress={handleSubmit}>
+                  <ButtonText>Zaloguj</ButtonText>
+                </StyledButton>
+                <Line />
+                <ExtraView>
+                  <ExtraText>Nie posiadasz konta? </ExtraText>
+                  <TextLink>
+                    <TextLinkContent onPress={pushHandler}>Zarejestruj</TextLinkContent>
+                  </TextLink>
+                </ExtraView>
+              </StyledFormArea>
+            )}
+          </Formik>
+        </InnerContainer>
+      </StyledContainer>
+    </KeyboardAvoidingWrapper>
   );
 };
 

@@ -28,83 +28,90 @@ import {
   TextLink,
   TextLinkContent,
 } from '../components/styles';
+import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 
 // colors
 const { brand, darkLight } = Colors;
 
-const Signup = () => {
+const Signup = ({ navigation }) => {
   const [hidePassword, setHidePassword] = useState(true);
 
-  return (
-    <StyledContainer>
-      <StatusBar style="dark" />
-      <InnerContainer>
-        <PageLogo resizeMode="cover" source={require('../assets/logo.jpg')} />
-        <PageTitle>Praca Inżynierska</PageTitle>
-        <SubTitle>Rejestracja</SubTitle>
+  const pushHandler = () => {
+    navigation.push('Home');
+  };
 
-        <Formik
-          initialValues={{ fullname: '', email: '', password: '', confirmPassword: '' }}
-          onSubmit={(values) => {
-            console.log(values);
-          }}
-        >
-          {({ handleChange, handleBlur, handleSubmit, values }) => (
-            <StyledFormArea>
-              <MyTextInput
-                label="Nazwa Użytkownika"
-                icon="person"
-                onChangeText={handleChange('fullname')}
-                onBlur={handleBlur('fullname')}
-                value={values.fullname}
-                keyboardType="default"
-              />
-              <MyTextInput
-                label="E-mail"
-                icon="mail"
-                onChangeText={handleChange('email')}
-                onBlur={handleBlur('email')}
-                value={values.email}
-                keyboardType="email-address"
-              />
-              <MyTextInput
-                label="Hasło"
-                icon="lock"
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                value={values.password}
-                secureTextEntry={hidePassword}
-                isPassword={true}
-                hidePassword={hidePassword}
-                setHidePassword={setHidePassword}
-              />
-              <MyTextInput
-                label="Powtórz hasło"
-                icon="lock"
-                onChangeText={handleChange('confirmPassword')}
-                onBlur={handleBlur('confirmPassword')}
-                value={values.confirmPassword}
-                secureTextEntry={hidePassword}
-                isPassword={true}
-                hidePassword={hidePassword}
-                setHidePassword={setHidePassword}
-              />
-              <MsgBox>Nieprawidłowy adres e‑mail lub hasło</MsgBox>
-              <StyledButton onPress={handleSubmit}>
-                <ButtonText>Zarejestruj</ButtonText>
-              </StyledButton>
-              <Line />
-              <ExtraView>
-                <ExtraText>Posiadasz już konto? </ExtraText>
-                <TextLink>
-                  <TextLinkContent>Zaloguj</TextLinkContent>
-                </TextLink>
-              </ExtraView>
-            </StyledFormArea>
-          )}
-        </Formik>
-      </InnerContainer>
-    </StyledContainer>
+  return (
+    <KeyboardAvoidingWrapper>
+      <StyledContainer>
+        <StatusBar style="dark" />
+        <InnerContainer>
+          <PageLogo resizeMode="cover" source={require('../assets/logo.png')} />
+          <PageTitle>Praca Inżynierska</PageTitle>
+          <SubTitle>Rejestracja</SubTitle>
+
+          <Formik
+            initialValues={{ fullname: '', email: '', password: '', confirmPassword: '' }}
+            onSubmit={(values) => {
+              console.log(values);
+            }}
+          >
+            {({ handleChange, handleBlur, handleSubmit, values }) => (
+              <StyledFormArea>
+                <MyTextInput
+                  label="Nazwa Użytkownika"
+                  icon="person"
+                  onChangeText={handleChange('fullname')}
+                  onBlur={handleBlur('fullname')}
+                  value={values.fullname}
+                  keyboardType="default"
+                />
+                <MyTextInput
+                  label="E-mail"
+                  icon="mail"
+                  onChangeText={handleChange('email')}
+                  onBlur={handleBlur('email')}
+                  value={values.email}
+                  keyboardType="email-address"
+                />
+                <MyTextInput
+                  label="Hasło"
+                  icon="lock"
+                  onChangeText={handleChange('password')}
+                  onBlur={handleBlur('password')}
+                  value={values.password}
+                  secureTextEntry={hidePassword}
+                  isPassword={true}
+                  hidePassword={hidePassword}
+                  setHidePassword={setHidePassword}
+                />
+                <MyTextInput
+                  label="Powtórz hasło"
+                  icon="lock"
+                  onChangeText={handleChange('confirmPassword')}
+                  onBlur={handleBlur('confirmPassword')}
+                  value={values.confirmPassword}
+                  secureTextEntry={hidePassword}
+                  isPassword={true}
+                  hidePassword={hidePassword}
+                  setHidePassword={setHidePassword}
+                />
+                <MsgBox>Nieprawidłowy adres e‑mail lub hasło</MsgBox>
+                <StyledButton onPress={handleSubmit}>
+                  <ButtonText>Zarejestruj</ButtonText>
+                </StyledButton>
+                <Line />
+                <ExtraView>
+                  <ExtraText>Posiadasz już konto? </ExtraText>
+                  <TextLink>
+                    <TextLinkContent onPress={pushHandler}>Zaloguj</TextLinkContent>
+                  </TextLink>
+                </ExtraView>
+              </StyledFormArea>
+            )}
+          </Formik>
+        </InnerContainer>
+      </StyledContainer>
+    </KeyboardAvoidingWrapper>
   );
 };
 
