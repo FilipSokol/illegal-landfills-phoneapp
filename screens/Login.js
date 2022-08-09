@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import Axios from 'axios';
 import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Formik } from 'formik';
@@ -35,10 +36,37 @@ const { brand, darkLight } = Colors;
 
 const Login = ({ navigation }) => {
   const [hidePassword, setHidePassword] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginStatus, setLoginStatus] = useState('');
 
   const pushHandler = () => {
     navigation.push('Signup');
   };
+
+  Axios.defaults.withCredentials = true;
+
+  const login = () => {
+    Axios.post('http://localhost:3001/login', {
+      email: email,
+      password: password,
+      credentials: 'include',
+    }).then((response) => {
+      if (response.data.message) {
+        setLoginStatus(response.data.message);
+      } else {
+        setLoginStatus(response.data[0].email);
+      }
+    });
+  };
+
+  useEffect(() => {
+    Axios.get('http://localhost:3001/login').then((response) => {
+      if (response.data.loggedIn == true) {
+        setLoginStatus(response.data.user[0].email);
+      }
+    });
+  }, []);
 
   return (
     <KeyboardAvoidingWrapper>
