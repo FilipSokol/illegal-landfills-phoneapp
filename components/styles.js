@@ -61,7 +61,7 @@ export const StyledFormArea = styled.View`
 `;
 
 export const StyledTextInput = styled.TextInput`
-  background-color: ${secondary}
+  background-color: ${secondary};
   padding: 15px;
   padding-left: 55px;
   padding-right: 55px;
@@ -70,7 +70,7 @@ export const StyledTextInput = styled.TextInput`
   height: 60px;
   margin-vertical: 3px;
   margin-bottom: 10px;
-  color: ${tertiary}
+  color: ${tertiary};
 `;
 
 export const StyledInputLabel = styled.Text`
@@ -111,9 +111,10 @@ export const ButtonText = styled.Text`
 `;
 
 export const MsgBox = styled.Text`
+  height: 16px;
   text-align: center;
   font-size: 13px;
-  margin-bottom: 25px;
+  margin-bottom: 3px;
   color: ${red};
 `;
 

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { Formik } from 'formik';
+import Axios from 'axios';
 
 // icons
 import { Octicons, Ionicons } from '@expo/vector-icons';
@@ -37,8 +37,85 @@ const Signup = ({ navigation }) => {
   const [hidePassword, setHidePassword] = useState(true);
 
   const pushHandler = () => {
-    navigation.push('Home');
+    navigation.push('Login');
   };
+
+  Axios.defaults.withCredentials = true;
+
+  const [usernameVal, setUsernameVal] = useState();
+  const [emailVal, setEmailVal] = useState();
+  const [passwordVal, setPasswordVal] = useState();
+  const [secPasswordVal, setSecPasswordVal] = useState();
+  const [valStatus, setValStatus] = useState();
+
+  const [usernameMes, setUsernameMes] = useState('');
+  const [emailMes, setEmailMes] = useState('');
+  const [passwordMes, setPasswordMes] = useState('');
+  const [secPasswordMes, setSecPasswordMes] = useState('');
+
+  const [usernameReg, setUsernameReg] = useState('');
+  const [emailReg, setEmailReg] = useState('');
+  const [passwordReg, setPasswordReg] = useState('');
+  const [secPasswordReg, setSecPasswordReg] = useState('');
+
+  const [registerStatus, setRegisterStatus] = useState('');
+
+  const validation = () => {
+    const usernameRegex = /^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
+    const emailRegex =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,32}$/;
+
+    // USERNAME
+    usernameRegex.test(usernameReg)
+      ? (setUsernameVal(true), setUsernameMes(''))
+      : (setUsernameVal(false), setUsernameMes('Niepoprawna składnia nazwy użytkownika'));
+
+    // EMAIL
+    emailRegex.test(emailReg)
+      ? (setEmailVal(true), setEmailMes(''))
+      : (setEmailVal(false), setEmailMes('Niepoprawna składnia e-maila'));
+
+    // PASSWORD
+    passwordRegex.test(passwordReg)
+      ? (setPasswordVal(true), setPasswordMes(''))
+      : (setPasswordVal(false), setPasswordMes('Niepoprawna składnia hasła'));
+
+    // SECOND PASSWORD
+    passwordReg === secPasswordReg
+      ? (setSecPasswordVal(true), setSecPasswordMes(''))
+      : (setSecPasswordVal(false), setSecPasswordMes('Podane hasła nie zgadzają się'));
+
+    // ACTUAL REGISTER
+    if (usernameVal === true && emailVal === true && passwordVal === true && secPasswordVal === true) {
+      setValStatus(true);
+    }
+  };
+
+  const register = () => {
+    if (valStatus === true) {
+      Axios.post('http://localhost:3001/register', {
+        username: usernameReg,
+        email: emailReg,
+        password: passwordReg,
+      }).then((response) => {
+        if (response.data.message) {
+          setRegisterStatus(response.data.message);
+        } else {
+          console.log(response.data.message);
+          pushHandler();
+        }
+      });
+    } else {
+      validation();
+    }
+  };
+
+  useEffect(() => {
+    if (usernameReg !== '' || emailReg !== '' || passwordReg !== '') {
+      validation();
+    }
+  });
 
   return (
     <KeyboardAvoidingWrapper>
@@ -49,66 +126,60 @@ const Signup = ({ navigation }) => {
           <PageTitle>Praca Inżynierska</PageTitle>
           <SubTitle>Rejestracja</SubTitle>
 
-          <Formik
-            initialValues={{ fullname: '', email: '', password: '', confirmPassword: '' }}
-            onSubmit={(values) => {
-              console.log(values);
-            }}
-          >
-            {({ handleChange, handleBlur, handleSubmit, values }) => (
-              <StyledFormArea>
-                <MyTextInput
-                  label="Nazwa Użytkownika"
-                  icon="person"
-                  onChangeText={handleChange('fullname')}
-                  onBlur={handleBlur('fullname')}
-                  value={values.fullname}
-                  keyboardType="default"
-                />
-                <MyTextInput
-                  label="E-mail"
-                  icon="mail"
-                  onChangeText={handleChange('email')}
-                  onBlur={handleBlur('email')}
-                  value={values.email}
-                  keyboardType="email-address"
-                />
-                <MyTextInput
-                  label="Hasło"
-                  icon="lock"
-                  onChangeText={handleChange('password')}
-                  onBlur={handleBlur('password')}
-                  value={values.password}
-                  secureTextEntry={hidePassword}
-                  isPassword={true}
-                  hidePassword={hidePassword}
-                  setHidePassword={setHidePassword}
-                />
-                <MyTextInput
-                  label="Powtórz hasło"
-                  icon="lock"
-                  onChangeText={handleChange('confirmPassword')}
-                  onBlur={handleBlur('confirmPassword')}
-                  value={values.confirmPassword}
-                  secureTextEntry={hidePassword}
-                  isPassword={true}
-                  hidePassword={hidePassword}
-                  setHidePassword={setHidePassword}
-                />
-                <MsgBox>Nieprawidłowy adres e‑mail lub hasło</MsgBox>
-                <StyledButton onPress={handleSubmit}>
-                  <ButtonText>Zarejestruj</ButtonText>
-                </StyledButton>
-                <Line />
-                <ExtraView>
-                  <ExtraText>Posiadasz już konto? </ExtraText>
-                  <TextLink>
-                    <TextLinkContent onPress={pushHandler}>Zaloguj</TextLinkContent>
-                  </TextLink>
-                </ExtraView>
-              </StyledFormArea>
-            )}
-          </Formik>
+          <StyledFormArea>
+            <MyTextInput
+              label="Nazwa Użytkownika"
+              icon="person"
+              onChangeText={(nameText) => setUsernameReg(nameText)}
+              defaultValue={usernameReg}
+              keyboardType="default"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            <MsgBox>{usernameMes}</MsgBox>
+            <MyTextInput
+              label="E-mail"
+              icon="mail"
+              onChangeText={(emailText) => setEmailReg(emailText)}
+              defaultValue={emailReg}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            <MsgBox>{emailMes}</MsgBox>
+            <MyTextInput
+              label="Hasło"
+              icon="lock"
+              onChangeText={(passwordText) => setPasswordReg(passwordText)}
+              defaultValue={passwordReg}
+              secureTextEntry={hidePassword}
+              isPassword={true}
+              hidePassword={hidePassword}
+              setHidePassword={setHidePassword}
+            />
+            <MsgBox>{passwordMes}</MsgBox>
+            <MyTextInput
+              label="Powtórz hasło"
+              icon="lock"
+              onChangeText={(passwordText) => setSecPasswordReg(passwordText)}
+              defaultValue={secPasswordReg}
+              secureTextEntry={hidePassword}
+              isPassword={true}
+              hidePassword={hidePassword}
+              setHidePassword={setHidePassword}
+            />
+            <MsgBox>{secPasswordMes === '' ? registerStatus : secPasswordMes}</MsgBox>
+            <StyledButton onPress={register}>
+              <ButtonText>Zarejestruj</ButtonText>
+            </StyledButton>
+            <Line />
+            <ExtraView>
+              <ExtraText>Posiadasz już konto? </ExtraText>
+              <TextLink>
+                <TextLinkContent onPress={pushHandler}>Zaloguj</TextLinkContent>
+              </TextLink>
+            </ExtraView>
+          </StyledFormArea>
         </InnerContainer>
       </StyledContainer>
     </KeyboardAvoidingWrapper>

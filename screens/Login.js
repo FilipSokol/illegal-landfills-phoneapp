@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import Axios from 'axios';
 import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { Formik } from 'formik';
+import Axios from 'axios';
 
 // icons
 import { Octicons, Ionicons } from '@expo/vector-icons';
@@ -46,25 +45,22 @@ const Login = ({ navigation }) => {
 
   Axios.defaults.withCredentials = true;
 
+  // ! Solution for issue (ios localhost)
+  // ! https://github.com/facebook/react-native/issues/10404
+
   const login = () => {
     Axios.post('http://localhost:3001/login', {
       email: email,
       password: password,
       credentials: 'include',
     }).then((response) => {
-      if (response.data.message) {
-        setLoginStatus(response.data.message);
-      } else {
-        setLoginStatus(response.data[0].email);
-      }
+      response.data.message ? setLoginStatus(response.data.message) : setLoginStatus(response.data[0].email);
     });
   };
 
   useEffect(() => {
     Axios.get('http://localhost:3001/login').then((response) => {
-      if (response.data.loggedIn == true) {
-        setLoginStatus(response.data.user[0].email);
-      }
+      response.data.loggedIn === true && setLoginStatus(response.data.user[0].email);
     });
   }, []);
 
@@ -77,47 +73,39 @@ const Login = ({ navigation }) => {
           <PageTitle>Praca Inżynierska</PageTitle>
           <SubTitle>Logowanie</SubTitle>
 
-          <Formik
-            initialValues={{ email: '', password: '' }}
-            onSubmit={(values) => {
-              console.log(values);
-            }}
-          >
-            {({ handleChange, handleBlur, handleSubmit, values }) => (
-              <StyledFormArea>
-                <MyTextInput
-                  label="E-mail"
-                  icon="mail"
-                  onChangeText={handleChange('email')}
-                  onBlur={handleBlur('email')}
-                  value={values.email}
-                  keyboardType="email-address"
-                />
-                <MyTextInput
-                  label="Hasło"
-                  icon="lock"
-                  onChangeText={handleChange('password')}
-                  onBlur={handleBlur('password')}
-                  value={values.password}
-                  secureTextEntry={hidePassword}
-                  isPassword={true}
-                  hidePassword={hidePassword}
-                  setHidePassword={setHidePassword}
-                />
-                <MsgBox>Nieprawidłowy adres e‑mail lub hasło</MsgBox>
-                <StyledButton onPress={handleSubmit}>
-                  <ButtonText>Zaloguj</ButtonText>
-                </StyledButton>
-                <Line />
-                <ExtraView>
-                  <ExtraText>Nie posiadasz konta? </ExtraText>
-                  <TextLink>
-                    <TextLinkContent onPress={pushHandler}>Zarejestruj</TextLinkContent>
-                  </TextLink>
-                </ExtraView>
-              </StyledFormArea>
-            )}
-          </Formik>
+          <StyledFormArea>
+            <MyTextInput
+              label="E-mail"
+              icon="mail"
+              onChangeText={(emailText) => setEmail(emailText)}
+              defaultValue={email}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            <MsgBox />
+            <MyTextInput
+              label="Hasło"
+              icon="lock"
+              onChangeText={(passwordText) => setPassword(passwordText)}
+              defaultValue={password}
+              secureTextEntry={hidePassword}
+              isPassword={true}
+              hidePassword={hidePassword}
+              setHidePassword={setHidePassword}
+            />
+            <MsgBox>{loginStatus}</MsgBox>
+            <StyledButton onPress={login}>
+              <ButtonText>Zaloguj</ButtonText>
+            </StyledButton>
+            <Line />
+            <ExtraView>
+              <ExtraText>Nie posiadasz konta? </ExtraText>
+              <TextLink>
+                <TextLinkContent onPress={pushHandler}>Zarejestruj</TextLinkContent>
+              </TextLink>
+            </ExtraView>
+          </StyledFormArea>
         </InnerContainer>
       </StyledContainer>
     </KeyboardAvoidingWrapper>
