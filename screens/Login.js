@@ -39,10 +39,6 @@ const Login = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [loginStatus, setLoginStatus] = useState('');
 
-  const pushHandler = () => {
-    navigation.push('Signup');
-  };
-
   Axios.defaults.withCredentials = true;
 
   // ! Solution for issue (ios localhost)
@@ -54,13 +50,17 @@ const Login = ({ navigation }) => {
       password: password,
       credentials: 'include',
     }).then((response) => {
-      response.data.message ? setLoginStatus(response.data.message) : setLoginStatus(response.data[0].email);
+      response.data.message
+        ? setLoginStatus(response.data.message)
+        : (setLoginStatus(response.data[0].email), navigation.push('Photo'));
     });
   };
 
   useEffect(() => {
     Axios.get('http://localhost:3001/login').then((response) => {
+      console.log(response.data.email[0]);
       response.data.loggedIn === true && setLoginStatus(response.data.user[0].email);
+      console.log(response.data);
     });
   }, []);
 
@@ -102,7 +102,13 @@ const Login = ({ navigation }) => {
             <ExtraView>
               <ExtraText>Nie posiadasz konta? </ExtraText>
               <TextLink>
-                <TextLinkContent onPress={pushHandler}>Zarejestruj</TextLinkContent>
+                <TextLinkContent
+                  onPress={() => {
+                    navigation.push('Signup');
+                  }}
+                >
+                  Zarejestruj
+                </TextLinkContent>
               </TextLink>
             </ExtraView>
           </StyledFormArea>

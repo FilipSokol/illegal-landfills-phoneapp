@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View } from 'react-native';
+import { View, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import Axios from 'axios';
 
@@ -35,10 +35,7 @@ const { brand, darkLight } = Colors;
 
 const Signup = ({ navigation }) => {
   const [hidePassword, setHidePassword] = useState(true);
-
-  const pushHandler = () => {
-    navigation.push('Login');
-  };
+  const [hideSecPassword, setHideSecPassword] = useState(true);
 
   Axios.defaults.withCredentials = true;
 
@@ -103,7 +100,8 @@ const Signup = ({ navigation }) => {
           setRegisterStatus(response.data.message);
         } else {
           console.log(response.data.message);
-          pushHandler();
+          Alert.alert('Zarejestrowano pomyślnie');
+          navigation.push('Login');
         }
       });
     } else {
@@ -163,10 +161,10 @@ const Signup = ({ navigation }) => {
               icon="lock"
               onChangeText={(passwordText) => setSecPasswordReg(passwordText)}
               defaultValue={secPasswordReg}
-              secureTextEntry={hidePassword}
+              secureTextEntry={hideSecPassword}
               isPassword={true}
-              hidePassword={hidePassword}
-              setHidePassword={setHidePassword}
+              hidePassword={hideSecPassword}
+              setHidePassword={setHideSecPassword}
             />
             <MsgBox>{secPasswordMes === '' ? registerStatus : secPasswordMes}</MsgBox>
             <StyledButton onPress={register}>
@@ -176,7 +174,13 @@ const Signup = ({ navigation }) => {
             <ExtraView>
               <ExtraText>Posiadasz już konto? </ExtraText>
               <TextLink>
-                <TextLinkContent onPress={pushHandler}>Zaloguj</TextLinkContent>
+                <TextLinkContent
+                  onPress={() => {
+                    navigation.push('Login');
+                  }}
+                >
+                  Zaloguj
+                </TextLinkContent>
               </TextLink>
             </ExtraView>
           </StyledFormArea>
