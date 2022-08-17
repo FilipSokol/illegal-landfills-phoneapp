@@ -1,10 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import { Button, StyleSheet, Text, TouchableOpacity, View, Image, Alert } from 'react-native';
 import { Camera, CameraType } from 'expo-camera';
 import * as Location from 'expo-location';
 
 // components
-import { StyledContainer, InnerContainer, MsgBox } from '../components/styles';
+import {
+  StyledPhotoContainer,
+  StyledButtonMenu,
+  ButtonText,
+  StyledButtonsArea,
+  StyledPhotoButtonsArea,
+} from '../components/styles';
 
 const styles = StyleSheet.create({
   container: {
@@ -13,24 +19,25 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    minWidth: '100%',
-    flex: 1,
-  },
-  button: {
-    flex: 1,
-    alignItems: 'center',
+  styledButtonMenu: {
+    padding: 15,
+    backgroundColor: '#0CE363',
     justifyContent: 'center',
-    width: 150,
-    height: 40,
-    margin: 8,
-    backgroundColor: 'grey',
+    alignItems: 'center',
+    borderRadius: 5,
+    marginVertical: 5,
+    width: 190,
+    height: 60,
   },
-  text: {
-    fontSize: 18,
-    color: 'white',
-    fontWeight: 'bold',
+  styledButtonMenuDisabled: {
+    padding: 15,
+    backgroundColor: '#b3c9bc',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    marginVertical: 5,
+    width: 190,
+    height: 60,
   },
 });
 
@@ -38,24 +45,21 @@ const Photo = () => {
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [useCamera, setUseCamera] = useState(false);
   const [image, setImage] = useState(null);
-
   const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
 
   const cameraRef = useRef(null);
 
+  // ! Dodać ponowne proszenie o lokalizacje
+
   useEffect(() => {
     (async () => {
-      if (Platform.OS === 'android' && !Device.isDevice) {
-        setErrorMsg('Oops, this will not work on Snack in an Android Emulator. Try it on your device!');
-        return;
-      }
       let { status } = await Location.requestForegroundPermissionsAsync();
+
       if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
+        Alert.alert('Potrzebna jest zgoda na użycie lokalizacji');
         return;
       }
-
+      console.log(status);
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
       console.log(location.coords.latitude + ' ' + location.coords.longitude);
@@ -92,29 +96,20 @@ const Photo = () => {
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
+    <StyledPhotoContainer>
       {useCamera ? (
         <View>
           <Camera style={styles.camera} type={CameraType.back} ref={cameraRef}>
             <View style={{ flex: 9 }}></View>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={styles.button}
+            <StyledPhotoButtonsArea>
+              <StyledButtonMenu
                 onPress={() => {
                   setUseCamera(false);
                 }}
               >
-                <Text style={styles.text}>ANULUJ</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button]}
+                <ButtonText>ANULUJ</ButtonText>
+              </StyledButtonMenu>
+              <StyledButtonMenu
                 onPress={async () => {
                   console.log('W trybie aparatu');
                   const r = await takePicture();
@@ -125,45 +120,46 @@ const Photo = () => {
                   console.log('Zdjecie - ', JSON.stringify(r));
                 }}
               >
-                <Text style={styles.text}>ZDJĘCIE</Text>
-              </TouchableOpacity>
-            </View>
+                <ButtonText>ZDJĘCIE</ButtonText>
+              </StyledButtonMenu>
+            </StyledPhotoButtonsArea>
           </Camera>
         </View>
       ) : (
         <>
           <View style={{ width: '100%' }}>
             <View style={{ width: '100%', alignItems: 'center' }}>
-              {true && <Image source={{ uri: image }} style={{ width: 300, height: 500, backgroundColor: 'gray' }} />}
+              {true && (
+                <Image
+                  resizeMode={image === null ? 'center' : 'cover'}
+                  source={image === null ? require('../assets/camera.png') : { uri: image }}
+                  style={{ width: 300, height: 500, borderColor: '#e6e6e6', borderWidth: 2 }}
+                />
+              )}
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-              }}
-            >
+            <StyledButtonsArea>
               <TouchableOpacity
-                style={[styles.button]}
+                style={image === null ? [styles.styledButtonMenuDisabled] : [styles.styledButtonMenu]}
                 onPress={async () => {
                   console.log('WYŚLIJ');
                 }}
                 disabled={image === null ? true : false}
               >
-                <Text style={styles.text}> WYŚLIJ </Text>
+                <ButtonText>WYŚLIJ</ButtonText>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button]}
+              <StyledButtonMenu
                 onPress={async () => {
                   console.log('W trybie aparatu');
                   setUseCamera(true);
                 }}
               >
-                <Text style={styles.text}> NOWE ZDJĘCIE </Text>
-              </TouchableOpacity>
-            </View>
+                <ButtonText>NOWE ZDJĘCIE</ButtonText>
+              </StyledButtonMenu>
+            </StyledButtonsArea>
           </View>
         </>
       )}
-    </View>
+    </StyledPhotoContainer>
   );
 };
 

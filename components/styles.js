@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { View, TextStyle, Image, TextInput, TouchableOpacity } from 'react-native';
 import Constants from 'expo-constants';
 
 const StatusBarHeight = Constants.statusBarHeight;
@@ -27,6 +26,13 @@ export const StyledContainer = styled.View`
   padding: 25px;
   padding-top: ${StatusBarHeight + 10}px;
   backgorund-color: ${primary};
+`;
+
+export const StyledPhotoContainer = styled.View`
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const InnerContainer = styled.View`
@@ -58,6 +64,25 @@ export const SubTitle = styled.Text`
 
 export const StyledFormArea = styled.View`
   width: 90%;
+`;
+
+export const StyledButtonsArea = styled.View`
+  justify-content: space-around;
+  flex-direction: row;
+  align-content: center;
+  padding: 0 5px 0 5px;
+  margin-top: 25px;
+  min-width: 100%;
+`;
+
+export const StyledPhotoButtonsArea = styled.View`
+  justify-content: space-around;
+  flex-direction: row;
+  align-content: center;
+  padding: 5px 5px 5px 5px;
+  margin: 10px 0 35px 0;
+  min-width: 100%;
+  background-color: rgba(76, 76, 76, 0.28);
 `;
 
 export const StyledTextInput = styled.TextInput`
@@ -100,6 +125,17 @@ export const StyledButton = styled.TouchableOpacity`
   align-items: center;
   border-radius: 5px;
   margin-vertical: 5px
+  height: 60px;
+`;
+
+export const StyledButtonMenu = styled.TouchableOpacity`
+  padding: 15px;
+  background-color: ${brand};
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  margin-vertical: 5px
+  width: 190px
   height: 60px;
 `;
 
