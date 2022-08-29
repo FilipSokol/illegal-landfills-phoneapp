@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Axios from 'axios';
 import { Button, StyleSheet, Text, TouchableOpacity, View, Image, Alert } from 'react-native';
 import { Camera, CameraType } from 'expo-camera';
 import * as Location from 'expo-location';
@@ -15,6 +16,8 @@ import {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   camera: {
     flex: 1,
@@ -45,24 +48,21 @@ const Photo = () => {
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [useCamera, setUseCamera] = useState(false);
   const [image, setImage] = useState(null);
+  const [imageBase64, setImageBase64] = useState(null);
+  const [imageIsProcessed, setimageIsProcessed] = useState(false);
   const [location, setLocation] = useState(null);
 
   const cameraRef = useRef(null);
 
-  // ! Dodać ponowne proszenie o lokalizacje
-
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
-
       if (status !== 'granted') {
         Alert.alert('Potrzebna jest zgoda na użycie lokalizacji');
         return;
       }
-      console.log(status);
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
-      console.log(location.coords.latitude + ' ' + location.coords.longitude);
     })();
   }, []);
 
@@ -81,18 +81,59 @@ const Photo = () => {
 
   const takePicture = async () => {
     if (cameraRef) {
-      console.log('Robie zdjecie');
       try {
         let photo = await cameraRef.current.takePictureAsync({
-          allowsEditring: true,
           aspect: [4, 3],
-          quality: 1,
+          quality: 0.2,
+          base64: true,
         });
-        return photo;
-      } catch (e) {
-        console.log(e);
+
+        setImageBase64(photo.base64);
+
+        setUseCamera(false);
+        if (!photo.cancelled) {
+          setImage(photo.uri);
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
+  };
+
+  const createMarker = (e) => {
+    setimageIsProcessed(true);
+
+    let base64Img = `data:image/jpg;base64,${imageBase64}`;
+    Axios.post('https://api.cloudinary.com/v1_1/ddqprz03r/image/upload', {
+      file: base64Img,
+      upload_preset: 'PracaInzynierska',
+    })
+      .then(async (response) => {
+        if (response.data.secure_url) {
+          Axios.post('http://192.168.100.15:3001/api/createmarker', {
+            userid: 0,
+            imageurl: response.data.secure_url,
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            description: 'test',
+          })
+            .then((response) => {
+              alert('Pomyślnie dodano post');
+              setimageIsProcessed(false);
+              setImage(null);
+            })
+            .catch((err) => {
+              alert('Błąd dodawania posta');
+              setimageIsProcessed(false);
+              console.log(err);
+            });
+        }
+      })
+      .catch((err) => {
+        alert('Błąd wysyłania zdjęcia');
+        setimageIsProcessed(false);
+        console.log(err);
+      });
   };
 
   return (
@@ -111,13 +152,7 @@ const Photo = () => {
               </StyledButtonMenu>
               <StyledButtonMenu
                 onPress={async () => {
-                  console.log('W trybie aparatu');
-                  const r = await takePicture();
-                  setUseCamera(false);
-                  if (!r.cancelled) {
-                    setImage(r.uri);
-                  }
-                  console.log('Zdjecie - ', JSON.stringify(r));
+                  await takePicture();
                 }}
               >
                 <ButtonText>ZDJĘCIE</ButtonText>
@@ -139,9 +174,13 @@ const Photo = () => {
             </View>
             <StyledButtonsArea>
               <TouchableOpacity
-                style={image === null ? [styles.styledButtonMenuDisabled] : [styles.styledButtonMenu]}
+                style={
+                  image === null || imageIsProcessed === true
+                    ? [styles.styledButtonMenuDisabled]
+                    : [styles.styledButtonMenu]
+                }
                 onPress={async () => {
-                  console.log('WYŚLIJ');
+                  createMarker();
                 }}
                 disabled={image === null ? true : false}
               >
@@ -149,8 +188,8 @@ const Photo = () => {
               </TouchableOpacity>
               <StyledButtonMenu
                 onPress={async () => {
-                  console.log('W trybie aparatu');
                   setUseCamera(true);
+                  setimageIsProcessed(false);
                 }}
               >
                 <ButtonText>NOWE ZDJĘCIE</ButtonText>
