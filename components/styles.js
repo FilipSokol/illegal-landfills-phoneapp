@@ -75,14 +75,41 @@ export const StyledButtonsArea = styled.View`
   min-width: 100%;
 `;
 
+// export const StyledPhotoButtonsArea = styled.View`
+//   justify-content: space-around;
+//   flex-direction: row;
+//   align-content: center;
+//   padding: 5px 5px 5px 5px;
+//   margin: 10px 0 35px 0;
+//   min-width: 100%;
+//   background-color: rgba(76, 76, 76, 0.28);
+// `;
+
 export const StyledPhotoButtonsArea = styled.View`
-  justify-content: space-around;
-  flex-direction: row;
-  align-content: center;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
   padding: 5px 5px 5px 5px;
   margin: 10px 0 35px 0;
+  height: 100%;
   min-width: 100%;
-  background-color: rgba(76, 76, 76, 0.28);
+`;
+
+export const StyledPhotoCancelButton = styled.TouchableOpacity`
+  margin-top: ${StatusBarHeight}px;
+  justify-content: center;
+  align-self: left;
+  align-items: center;
+  width: 70px
+  height: 70px;
+`;
+
+export const StyledPhotoCircleButton = styled.TouchableOpacity`
+  margin-bottom:50px;
+  justify-content: center;
+  align-items: center;
+  width: 90px
+  height: 90px;
 `;
 
 export const StyledTextInput = styled.TextInput`

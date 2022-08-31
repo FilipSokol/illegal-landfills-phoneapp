@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Axios from 'axios';
-import { Button, StyleSheet, Text, TouchableOpacity, View, Image, Alert } from 'react-native';
+import { Button, StyleSheet, Text, TouchableOpacity, View, Image, Alert, TextInput } from 'react-native';
 import { Camera, CameraType } from 'expo-camera';
+import { AntDesign } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 
 // components
@@ -11,8 +13,11 @@ import {
   ButtonText,
   StyledButtonsArea,
   StyledPhotoButtonsArea,
+  StyledPhotoCancelButton,
+  StyledPhotoCircleButton,
 } from '../components/styles';
 
+// styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -42,15 +47,30 @@ const styles = StyleSheet.create({
     width: 190,
     height: 60,
   },
+  imageStyleBox: {
+    width: 300,
+    height: 500,
+    borderColor: '#e6e6e6',
+    borderWidth: 2,
+  },
+  descriptionTextArea: {
+    height: 95,
+    width: 300,
+    marginTop: 15,
+    padding: 10,
+    borderColor: '#e6e6e6',
+    borderWidth: 2,
+  },
 });
 
 const Photo = () => {
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [useCamera, setUseCamera] = useState(false);
+  const [location, setLocation] = useState(null);
   const [image, setImage] = useState(null);
   const [imageBase64, setImageBase64] = useState(null);
   const [imageIsProcessed, setimageIsProcessed] = useState(false);
-  const [location, setLocation] = useState(null);
+  const [description, setDescription] = useState(null);
 
   const cameraRef = useRef(null);
 
@@ -102,6 +122,7 @@ const Photo = () => {
 
   const createMarker = (e) => {
     setimageIsProcessed(true);
+    description === '' && setDescription(null);
 
     let base64Img = `data:image/jpg;base64,${imageBase64}`;
     Axios.post('https://api.cloudinary.com/v1_1/ddqprz03r/image/upload', {
@@ -115,11 +136,12 @@ const Photo = () => {
             imageurl: response.data.secure_url,
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
-            description: 'test',
+            description: description,
           })
             .then((response) => {
               alert('Pomyślnie dodano post');
               setimageIsProcessed(false);
+              setDescription(null);
               setImage(null);
             })
             .catch((err) => {
@@ -143,20 +165,20 @@ const Photo = () => {
           <Camera style={styles.camera} type={CameraType.back} ref={cameraRef}>
             <View style={{ flex: 9 }}></View>
             <StyledPhotoButtonsArea>
-              <StyledButtonMenu
+              <StyledPhotoCancelButton
                 onPress={() => {
                   setUseCamera(false);
                 }}
               >
-                <ButtonText>ANULUJ</ButtonText>
-              </StyledButtonMenu>
-              <StyledButtonMenu
+                <AntDesign name="close" size={50} color="#0CE363" />
+              </StyledPhotoCancelButton>
+              <StyledPhotoCircleButton
                 onPress={async () => {
                   await takePicture();
                 }}
               >
-                <ButtonText>ZDJĘCIE</ButtonText>
-              </StyledButtonMenu>
+                <FontAwesome name="circle" size={90} color="#0CE363" />
+              </StyledPhotoCircleButton>
             </StyledPhotoButtonsArea>
           </Camera>
         </View>
@@ -168,9 +190,17 @@ const Photo = () => {
                 <Image
                   resizeMode={image === null ? 'center' : 'cover'}
                   source={image === null ? require('../assets/camera.png') : { uri: image }}
-                  style={{ width: 300, height: 500, borderColor: '#e6e6e6', borderWidth: 2 }}
+                  style={styles.imageStyleBox}
                 />
               )}
+              <TextInput
+                onChangeText={(text) => setDescription(text)}
+                placeholder="Dodaj opis..."
+                textAlignVertical="top"
+                multiline={true}
+                maxLength={180}
+                style={styles.descriptionTextArea}
+              />
             </View>
             <StyledButtonsArea>
               <TouchableOpacity
