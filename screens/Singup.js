@@ -91,17 +91,17 @@ const Signup = ({ navigation }) => {
 
   const register = () => {
     if (valStatus === true) {
-      Axios.post('http://localhost:3001/register', {
+      Axios.post('http://localhost:3001/api/register', {
         username: usernameReg,
         email: emailReg,
         password: passwordReg,
       }).then((response) => {
-        if (response.data.message) {
-          setRegisterStatus(response.data.message);
-        } else {
+        if (response.data.message === '') {
           console.log(response.data.message);
-          Alert.alert('Zarejestrowano pomyślnie');
+          Alert.alert('Powiadomienie', 'Zarejestrowano pomyślnie');
           navigation.push('Login');
+        } else {
+          setRegisterStatus(response.data.message);
         }
       });
     } else {

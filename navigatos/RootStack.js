@@ -14,10 +14,10 @@ export default function RootStack() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen options={{ headerShown: false }} name="Photo" component={Photo} />
+        {/* <Stack.Screen options={{ headerShown: false }} name="Photo" component={Photo} /> */}
         <Stack.Screen options={{ headerShown: false }} name="Login" component={Login} />
         <Stack.Screen options={{ headerShown: false }} name="Signup" component={Signup} />
-        {/* <Stack.Screen options={{ headerShown: false }} name="Photo" component={Photo} /> */}
+        <Stack.Screen options={{ headerShown: false }} name="Photo" component={Photo} />
       </Stack.Navigator>
     </NavigationContainer>
   );

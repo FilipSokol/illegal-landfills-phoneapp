@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Axios from 'axios';
 import { Button, StyleSheet, Text, TouchableOpacity, View, Image, Alert, TextInput } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useEffect, useRef } from 'react';
+import * as Location from 'expo-location';
+import jwt_decode from 'jwt-decode';
+import Axios from 'axios';
 import { Camera, CameraType } from 'expo-camera';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-import * as Location from 'expo-location';
 
 // components
 import {
@@ -34,7 +36,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 5,
     marginVertical: 5,
-    width: 190,
+    width: 175,
     height: 60,
   },
   styledButtonMenuDisabled: {
@@ -44,7 +46,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 5,
     marginVertical: 5,
-    width: 190,
+    width: 175,
     height: 60,
   },
   imageStyleBox: {
@@ -71,8 +73,21 @@ const Photo = () => {
   const [imageBase64, setImageBase64] = useState(null);
   const [imageIsProcessed, setimageIsProcessed] = useState(false);
   const [description, setDescription] = useState(null);
+  const [tokenData, setTokenData] = useState([]);
 
   const cameraRef = useRef(null);
+
+  const AuthVerify = async () => {
+    const user = await AsyncStorage.getItem('user');
+    if (user != null) {
+      const decodedToken = jwt_decode(user);
+      setTokenData(decodedToken);
+    }
+  };
+
+  useEffect(() => {
+    AuthVerify();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -131,28 +146,29 @@ const Photo = () => {
     })
       .then(async (response) => {
         if (response.data.secure_url) {
-          Axios.post('http://192.168.100.15:3001/api/createmarker', {
-            userid: 0,
+          // Axios.post('http://192.168.100.15:3001/api/createmarker', {
+          Axios.post('http://localhost:3001/api/createmarker', {
+            userid: tokenData.userid,
             imageurl: response.data.secure_url,
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
             description: description,
           })
             .then((response) => {
-              alert('Pomyślnie dodano post');
+              alert('Powiadomienie', 'Pomyślnie dodano post');
               setimageIsProcessed(false);
               setDescription(null);
               setImage(null);
             })
             .catch((err) => {
-              alert('Błąd dodawania posta');
+              alert('Powiadomienie', 'Błąd dodawania posta');
               setimageIsProcessed(false);
               console.log(err);
             });
         }
       })
       .catch((err) => {
-        alert('Błąd wysyłania zdjęcia');
+        alert('Powiadomienie', 'Błąd wysyłania zdjęcia');
         setimageIsProcessed(false);
         console.log(err);
       });
@@ -197,6 +213,7 @@ const Photo = () => {
                 onChangeText={(text) => setDescription(text)}
                 placeholder="Dodaj opis..."
                 textAlignVertical="top"
+                value={description}
                 multiline={true}
                 maxLength={180}
                 style={styles.descriptionTextArea}

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState } from 'react';
 import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import Axios from 'axios';
@@ -44,25 +45,19 @@ const Login = ({ navigation }) => {
   // ! Solution for issue (ios localhost)
   // ! https://github.com/facebook/react-native/issues/10404
 
-  const login = () => {
-    Axios.post('http://localhost:3001/login', {
+  const Login = (e) => {
+    Axios.post('http://localhost:3001/api/login', {
       email: email,
       password: password,
-      credentials: 'include',
     }).then((response) => {
-      response.data.message
-        ? setLoginStatus(response.data.message)
-        : (setLoginStatus(response.data[0].email), navigation.push('Photo'));
+      if (response.data.accessToken) {
+        AsyncStorage.setItem('user', JSON.stringify(response.data));
+        navigation.push('Photo');
+      } else {
+        setLoginStatus(response.data.message);
+      }
     });
   };
-
-  useEffect(() => {
-    Axios.get('http://localhost:3001/login').then((response) => {
-      console.log(response.data.email[0]);
-      response.data.loggedIn === true && setLoginStatus(response.data.user[0].email);
-      console.log(response.data);
-    });
-  }, []);
 
   return (
     <KeyboardAvoidingWrapper>
@@ -95,7 +90,7 @@ const Login = ({ navigation }) => {
               setHidePassword={setHidePassword}
             />
             <MsgBox>{loginStatus}</MsgBox>
-            <StyledButton onPress={login}>
+            <StyledButton onPress={Login}>
               <ButtonText>Zaloguj</ButtonText>
             </StyledButton>
             <Line />

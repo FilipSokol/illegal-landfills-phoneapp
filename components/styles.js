@@ -42,8 +42,8 @@ export const InnerContainer = styled.View`
 `;
 
 export const PageLogo = styled.Image`
-  width: 200px;
-  height: 150px;
+  width: 138px;
+  height: 100px;
 `;
 
 export const PageTitle = styled.Text`
@@ -72,7 +72,7 @@ export const StyledButtonsArea = styled.View`
   align-content: center;
   padding: 0 5px 0 5px;
   margin-top: 25px;
-  min-width: 100%;
+  width: 100%;
 `;
 
 // export const StyledPhotoButtonsArea = styled.View`
@@ -96,7 +96,7 @@ export const StyledPhotoButtonsArea = styled.View`
 `;
 
 export const StyledPhotoCancelButton = styled.TouchableOpacity`
-  margin-top: ${StatusBarHeight}px;
+  margin-top: 25px;
   justify-content: center;
   align-self: left;
   align-items: center;
@@ -156,13 +156,13 @@ export const StyledButton = styled.TouchableOpacity`
 `;
 
 export const StyledButtonMenu = styled.TouchableOpacity`
-  padding: 15px;
   background-color: ${brand};
   justify-content: center;
   align-items: center;
   border-radius: 5px;
-  margin-vertical: 5px
-  width: 190px
+  margin-vertical: 5px;
+  padding: 15px;
+  width: 175px;
   height: 60px;
 `;
 
