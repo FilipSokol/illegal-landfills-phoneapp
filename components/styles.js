@@ -35,6 +35,10 @@ export const StyledPhotoContainer = styled.View`
   justify-content: center;
 `;
 
+export const StyledMainContainer = styled.View`
+  padding-top: ${StatusBarHeight + 10}px;
+`;
+
 export const InnerContainer = styled.View`
   flex: 1;
   width:100%

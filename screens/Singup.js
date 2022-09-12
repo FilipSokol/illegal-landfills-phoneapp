@@ -91,7 +91,8 @@ const Signup = ({ navigation }) => {
 
   const register = () => {
     if (valStatus === true) {
-      Axios.post('http://localhost:3001/api/register', {
+      // Axios.post('http://localhost:3001/api/register', {
+      Axios.post('http://192.168.100.4:3001/api/register', {
         username: usernameReg,
         email: emailReg,
         password: passwordReg,

@@ -42,11 +42,9 @@ const Login = ({ navigation }) => {
 
   Axios.defaults.withCredentials = true;
 
-  // ! Solution for issue (ios localhost)
-  // ! https://github.com/facebook/react-native/issues/10404
-
   const Login = (e) => {
-    Axios.post('http://localhost:3001/api/login', {
+    // Axios.post('http://localhost:3001/api/login', {
+    Axios.post('http://192.168.100.4:3001/api/login', {
       email: email,
       password: password,
     }).then((response) => {

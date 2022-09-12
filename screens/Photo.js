@@ -11,6 +11,7 @@ import { FontAwesome } from '@expo/vector-icons';
 // components
 import {
   StyledPhotoContainer,
+  StyledMainContainer,
   StyledButtonMenu,
   ButtonText,
   StyledButtonsArea,
@@ -18,6 +19,7 @@ import {
   StyledPhotoCancelButton,
   StyledPhotoCircleButton,
 } from '../components/styles';
+import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 
 // styles
 const styles = StyleSheet.create({
@@ -146,8 +148,8 @@ const Photo = () => {
     })
       .then(async (response) => {
         if (response.data.secure_url) {
-          // Axios.post('http://192.168.100.15:3001/api/createmarker', {
-          Axios.post('http://localhost:3001/api/createmarker', {
+          // Axios.post('http://localhost:3001/api/createmarker', {
+          Axios.post('http://192.168.100.4:3001/api/createmarker', {
             userid: tokenData.userid,
             imageurl: response.data.secure_url,
             latitude: location.coords.latitude,
@@ -199,51 +201,54 @@ const Photo = () => {
           </Camera>
         </View>
       ) : (
-        <>
-          <View style={{ width: '100%' }}>
-            <View style={{ width: '100%', alignItems: 'center' }}>
-              {true && (
-                <Image
-                  resizeMode={image === null ? 'center' : 'cover'}
-                  source={image === null ? require('../assets/camera.png') : { uri: image }}
-                  style={styles.imageStyleBox}
+        <KeyboardAvoidingWrapper>
+          <StyledMainContainer>
+            <View style={{ width: '100%' }}>
+              <View style={{ width: '100%', alignItems: 'center' }}>
+                <Text style={{ color: '#b3c9bc', marginBottom: 5 }}>Witaj {tokenData.username}!</Text>
+                {true && (
+                  <Image
+                    resizeMode={image === null ? 'center' : 'cover'}
+                    source={image === null ? require('../assets/camera.png') : { uri: image }}
+                    style={styles.imageStyleBox}
+                  />
+                )}
+                <TextInput
+                  onChangeText={(text) => setDescription(text)}
+                  placeholder="Dodaj opis..."
+                  textAlignVertical="top"
+                  value={description}
+                  multiline={true}
+                  maxLength={180}
+                  style={styles.descriptionTextArea}
                 />
-              )}
-              <TextInput
-                onChangeText={(text) => setDescription(text)}
-                placeholder="Dodaj opis..."
-                textAlignVertical="top"
-                value={description}
-                multiline={true}
-                maxLength={180}
-                style={styles.descriptionTextArea}
-              />
+              </View>
+              <StyledButtonsArea>
+                <TouchableOpacity
+                  style={
+                    image === null || imageIsProcessed === true
+                      ? [styles.styledButtonMenuDisabled]
+                      : [styles.styledButtonMenu]
+                  }
+                  onPress={async () => {
+                    createMarker();
+                  }}
+                  disabled={image === null ? true : false}
+                >
+                  <ButtonText>WYŚLIJ</ButtonText>
+                </TouchableOpacity>
+                <StyledButtonMenu
+                  onPress={async () => {
+                    setUseCamera(true);
+                    setimageIsProcessed(false);
+                  }}
+                >
+                  <ButtonText>NOWE ZDJĘCIE</ButtonText>
+                </StyledButtonMenu>
+              </StyledButtonsArea>
             </View>
-            <StyledButtonsArea>
-              <TouchableOpacity
-                style={
-                  image === null || imageIsProcessed === true
-                    ? [styles.styledButtonMenuDisabled]
-                    : [styles.styledButtonMenu]
-                }
-                onPress={async () => {
-                  createMarker();
-                }}
-                disabled={image === null ? true : false}
-              >
-                <ButtonText>WYŚLIJ</ButtonText>
-              </TouchableOpacity>
-              <StyledButtonMenu
-                onPress={async () => {
-                  setUseCamera(true);
-                  setimageIsProcessed(false);
-                }}
-              >
-                <ButtonText>NOWE ZDJĘCIE</ButtonText>
-              </StyledButtonMenu>
-            </StyledButtonsArea>
-          </View>
-        </>
+          </StyledMainContainer>
+        </KeyboardAvoidingWrapper>
       )}
     </StyledPhotoContainer>
   );
