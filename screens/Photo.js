@@ -147,9 +147,11 @@ const Photo = () => {
       upload_preset: 'PracaInzynierska',
     })
       .then(async (response) => {
+        console.log(response.data);
+
         if (response.data.secure_url) {
           // Axios.post('http://localhost:3001/api/createmarker', {
-          Axios.post('http://192.168.100.4:3001/api/createmarker', {
+          Axios.post('http://192.168.100.10:3001/api/createmarker', {
             userid: tokenData.userid,
             imageurl: response.data.secure_url,
             latitude: location.coords.latitude,
@@ -157,20 +159,20 @@ const Photo = () => {
             description: description,
           })
             .then((response) => {
-              alert('Powiadomienie', 'Pomyślnie dodano post');
+              alert('Pomyślnie dodano post');
               setimageIsProcessed(false);
               setDescription(null);
               setImage(null);
             })
             .catch((err) => {
-              alert('Powiadomienie', 'Błąd dodawania posta');
+              alert('Błąd dodawania posta');
               setimageIsProcessed(false);
               console.log(err);
             });
         }
       })
       .catch((err) => {
-        alert('Powiadomienie', 'Błąd wysyłania zdjęcia');
+        alert('Błąd wysyłania zdjęcia');
         setimageIsProcessed(false);
         console.log(err);
       });

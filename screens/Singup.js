@@ -92,14 +92,14 @@ const Signup = ({ navigation }) => {
   const register = () => {
     if (valStatus === true) {
       // Axios.post('http://localhost:3001/api/register', {
-      Axios.post('http://192.168.100.4:3001/api/register', {
+      Axios.post('http://192.168.100.10:3001/api/register', {
         username: usernameReg,
         email: emailReg,
         password: passwordReg,
       }).then((response) => {
         if (response.data.message === '') {
           console.log(response.data.message);
-          Alert.alert('Powiadomienie', 'Zarejestrowano pomyślnie');
+          Alert.alert('Zarejestrowano pomyślnie');
           navigation.push('Login');
         } else {
           setRegisterStatus(response.data.message);

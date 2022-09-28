@@ -44,7 +44,7 @@ const Login = ({ navigation }) => {
 
   const Login = (e) => {
     // Axios.post('http://localhost:3001/api/login', {
-    Axios.post('http://192.168.100.4:3001/api/login', {
+    Axios.post('http://192.168.100.10:3001/api/login', {
       email: email,
       password: password,
     }).then((response) => {
