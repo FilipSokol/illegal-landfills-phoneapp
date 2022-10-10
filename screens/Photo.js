@@ -1,5 +1,6 @@
 import { Button, StyleSheet, Text, TouchableOpacity, View, Image, Alert, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DropDownPicker from 'react-native-dropdown-picker';
 import React, { useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
 import jwt_decode from 'jwt-decode';
@@ -56,14 +57,28 @@ const styles = StyleSheet.create({
     height: 500,
     borderColor: '#e6e6e6',
     borderWidth: 2,
+    marginBottom: 10,
   },
   descriptionTextArea: {
     height: 95,
     width: 300,
-    marginTop: 15,
+    marginTop: 10,
     padding: 10,
     borderColor: '#e6e6e6',
     borderWidth: 2,
+  },
+  selectBoxTextArea: {
+    color: '#C1C1C6',
+  },
+  selectBoxContainer: {
+    width: 300,
+    borderWidth: 1,
+    borderColor: '#e6e6e6',
+  },
+  selectBoxBorder: {
+    borderColor: '#e6e6e6',
+    backgroundColor: '#F2F2F2',
+    borderRadius: 0,
   },
 });
 
@@ -74,8 +89,15 @@ const Photo = () => {
   const [image, setImage] = useState(null);
   const [imageBase64, setImageBase64] = useState(null);
   const [imageIsProcessed, setimageIsProcessed] = useState(false);
-  const [description, setDescription] = useState(null);
   const [tokenData, setTokenData] = useState([]);
+  const [description, setDescription] = useState(null);
+  const [typeValue, setTypeValue] = useState(null);
+  const [openSelectBox, setOpenSelectBox] = useState(false);
+
+  const selectBoxData = [
+    { label: 'Mieści się w workach', value: 'bag' },
+    { label: 'Potrzeba pojazdu', value: 'car' },
+  ];
 
   const cameraRef = useRef(null);
 
@@ -150,18 +172,19 @@ const Photo = () => {
         console.log(response.data);
 
         if (response.data.secure_url) {
-          // Axios.post('http://localhost:3001/api/createmarker', {
-          Axios.post('http://192.168.100.10:3001/api/createmarker', {
+          Axios.post('http://localhost:3001/api/createmarker', {
             userid: tokenData.userid,
             imageurl: response.data.secure_url,
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
+            type: typeValue,
             description: description,
           })
             .then((response) => {
               alert('Pomyślnie dodano post');
               setimageIsProcessed(false);
               setDescription(null);
+              setTypeValue(null);
               setImage(null);
             })
             .catch((err) => {
@@ -208,6 +231,7 @@ const Photo = () => {
             <View style={{ width: '100%' }}>
               <View style={{ width: '100%', alignItems: 'center' }}>
                 <Text style={{ color: '#b3c9bc', marginBottom: 5 }}>Witaj {tokenData.username}!</Text>
+
                 {true && (
                   <Image
                     resizeMode={image === null ? 'center' : 'cover'}
@@ -215,6 +239,21 @@ const Photo = () => {
                     style={styles.imageStyleBox}
                   />
                 )}
+                <DropDownPicker
+                  open={openSelectBox}
+                  value={typeValue}
+                  items={selectBoxData}
+                  setOpen={setOpenSelectBox}
+                  setValue={setTypeValue}
+                  setItems={selectBoxData}
+                  placeholder="Wybierz wielkość..."
+                  style={styles.selectBoxBorder}
+                  labelStyle={styles.selectBoxlabel}
+                  containerStyle={styles.selectBoxContainer}
+                  placeholderStyle={styles.selectBoxTextArea}
+                  dropDownContainerStyle={styles.selectBoxBorder}
+                  listMode="SCROLLVIEW"
+                />
                 <TextInput
                   onChangeText={(text) => setDescription(text)}
                   placeholder="Dodaj opis..."

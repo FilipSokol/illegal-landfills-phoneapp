@@ -36,7 +36,7 @@ export const StyledPhotoContainer = styled.View`
 `;
 
 export const StyledMainContainer = styled.View`
-  padding-top: ${StatusBarHeight + 10}px;
+  padding-top: ${StatusBarHeight}px;
 `;
 
 export const InnerContainer = styled.View`
@@ -75,7 +75,7 @@ export const StyledButtonsArea = styled.View`
   flex-direction: row;
   align-content: center;
   padding: 0 5px 0 5px;
-  margin-top: 25px;
+  margin-top: 15px;
   width: 100%;
 `;
 
