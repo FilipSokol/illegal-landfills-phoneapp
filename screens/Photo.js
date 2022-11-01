@@ -164,28 +164,32 @@ const Photo = () => {
     description === '' && setDescription(null);
 
     let base64Img = `data:image/jpg;base64,${imageBase64}`;
-    Axios.post('https://api.cloudinary.com/v1_1/ddqprz03r/image/upload', {
-      file: base64Img,
-      upload_preset: 'PracaInzynierska',
+
+    Axios.post('http://localhost:3001/api/images', {
+      userid: tokenData.userid,
+      image: base64Img,
     })
       .then(async (response) => {
-        console.log(response.data);
-
-        if (response.data.secure_url) {
+        if (response.data.imageurl) {
           Axios.post('http://localhost:3001/api/createmarker', {
             userid: tokenData.userid,
-            imageurl: response.data.secure_url,
+            imageurl: response.data.imageurl,
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
             type: typeValue,
             description: description,
           })
-            .then((response) => {
+            .then((res) => {
               alert('Pomyślnie dodano post');
               setimageIsProcessed(false);
               setDescription(null);
               setTypeValue(null);
               setImage(null);
+
+              Axios.post('http://localhost:3001/api/addpoints', {
+                score: 20,
+                userid: tokenData.userid,
+              });
             })
             .catch((err) => {
               alert('Błąd dodawania posta');
