@@ -14,11 +14,6 @@ export const Colors = {
   red: '#EF4444',
 };
 
-// colors: {
-//   lightgreen: "#0ce363",
-//   darkgreen: "#00c67f",
-//   lightblack: "#293231",
-
 const { primary, secondary, tertiary, darkLight, brand, green, red } = Colors;
 
 export const StyledContainer = styled.View`
@@ -78,16 +73,6 @@ export const StyledButtonsArea = styled.View`
   margin-top: 15px;
   width: 100%;
 `;
-
-// export const StyledPhotoButtonsArea = styled.View`
-//   justify-content: space-around;
-//   flex-direction: row;
-//   align-content: center;
-//   padding: 5px 5px 5px 5px;
-//   margin: 10px 0 35px 0;
-//   min-width: 100%;
-//   background-color: rgba(76, 76, 76, 0.28);
-// `;
 
 export const StyledPhotoButtonsArea = styled.View`
   justify-content: space-between;

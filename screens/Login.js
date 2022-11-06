@@ -3,11 +3,8 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import Axios from 'axios';
-
-// icons
 import { Octicons, Ionicons } from '@expo/vector-icons';
 
-// components
 import {
   StyledContainer,
   InnerContainer,
@@ -31,7 +28,6 @@ import {
 } from '../components/styles';
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 
-// colors
 const { brand, darkLight } = Colors;
 
 const Login = ({ navigation }) => {
@@ -42,8 +38,7 @@ const Login = ({ navigation }) => {
 
   Axios.defaults.withCredentials = true;
 
-  const Login = (e) => {
-    // Axios.post('http://localhost:3001/api/login', {
+  const Login = () => {
     Axios.post('http://localhost:3001/api/login', {
       email: email,
       password: password,

@@ -3,10 +3,8 @@ import { View, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import Axios from 'axios';
 
-// icons
 import { Octicons, Ionicons } from '@expo/vector-icons';
 
-// components
 import {
   StyledContainer,
   InnerContainer,
@@ -30,7 +28,6 @@ import {
 } from '../components/styles';
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 
-// colors
 const { brand, darkLight } = Colors;
 
 const Signup = ({ navigation }) => {
@@ -63,27 +60,22 @@ const Signup = ({ navigation }) => {
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,32}$/;
 
-    // USERNAME
     usernameRegex.test(usernameReg)
       ? (setUsernameVal(true), setUsernameMes(''))
       : (setUsernameVal(false), setUsernameMes('Niepoprawna składnia nazwy użytkownika'));
 
-    // EMAIL
     emailRegex.test(emailReg)
       ? (setEmailVal(true), setEmailMes(''))
       : (setEmailVal(false), setEmailMes('Niepoprawna składnia e-maila'));
 
-    // PASSWORD
     passwordRegex.test(passwordReg)
       ? (setPasswordVal(true), setPasswordMes(''))
       : (setPasswordVal(false), setPasswordMes('Niepoprawna składnia hasła'));
 
-    // SECOND PASSWORD
     passwordReg === secPasswordReg
       ? (setSecPasswordVal(true), setSecPasswordMes(''))
       : (setSecPasswordVal(false), setSecPasswordMes('Podane hasła nie zgadzają się'));
 
-    // ACTUAL REGISTER
     if (usernameVal === true && emailVal === true && passwordVal === true && secPasswordVal === true) {
       setValStatus(true);
     }
@@ -91,14 +83,12 @@ const Signup = ({ navigation }) => {
 
   const register = () => {
     if (valStatus === true) {
-      // Axios.post('http://localhost:3001/api/register', {
       Axios.post('http://localhost:3001/api/register', {
         username: usernameReg,
         email: emailReg,
         password: passwordReg,
       }).then((response) => {
         if (response.data.message === '') {
-          console.log(response.data.message);
           Alert.alert('Zarejestrowano pomyślnie');
           navigation.push('Login');
         } else {

@@ -9,7 +9,6 @@ import { Camera, CameraType } from 'expo-camera';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 
-// components
 import {
   StyledPhotoContainer,
   StyledMainContainer,
@@ -22,7 +21,6 @@ import {
 } from '../components/styles';
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 
-// styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -159,7 +157,7 @@ const Photo = () => {
     }
   };
 
-  const createMarker = (e) => {
+  const createMarker = () => {
     setimageIsProcessed(true);
     description === '' && setDescription(null);
 
@@ -179,7 +177,7 @@ const Photo = () => {
             type: typeValue,
             description: description,
           })
-            .then((res) => {
+            .then(() => {
               alert('Pomyślnie dodano post');
               setimageIsProcessed(false);
               setDescription(null);
