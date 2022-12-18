@@ -248,7 +248,7 @@ const Photo = () => {
                   setOpen={setOpenSelectBox}
                   setValue={setTypeValue}
                   setItems={selectBoxData}
-                  placeholder="Wybierz wielkość..."
+                  placeholder="Wybierz potrzebny sprzęt..."
                   style={styles.selectBoxBorder}
                   labelStyle={styles.selectBoxlabel}
                   containerStyle={styles.selectBoxContainer}
